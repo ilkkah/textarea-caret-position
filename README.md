@@ -31,6 +31,9 @@ faithfully reproduce the wrapping in the faux `div`. The same is done for the
 * [no problem](http://archive.today/F4XCV#13402035) getting the correct position when the input text is scrolled (i.e. the first visible character is no longer the first in the text)
 * no ["ghost" position in the empty space](https://github.com/component/textarea-caret-position/blob/06d2197f85f96405b43724e56dc56f220c0092a5/test/position_off_after_wrapping_with_whitespace_before_EOL.gif) at the end of a line when wrapping long words in a `<textarea>`
 
+## Added Features vs. the original
+ 
+ * calculates the left and right positions
 
 ## API
 
