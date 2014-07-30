@@ -1,0 +1,22 @@
+{
+  "name": "textarea-caret-position",
+  "version": "0.0.0",
+  "description": "xy coordinates of a textarea or input's caret",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ilkkah/textarea-caret-position"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilkkah/textarea-caret-position/issues"
+  },
+  "homepage": "https://github.com/ilkkah/textarea-caret-position"
+}
