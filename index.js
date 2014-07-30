@@ -41,16 +41,19 @@ var properties = [
   'wordSpacing'
 ];
 
-var isFirefox = window.mozInnerScreenX !== null;
+function CaretCoordinates(element) {
+  var self = this,
+      isFirefox = window.mozInnerScreenX !== null;
 
-var getCaretCoordinatesFn = function (element, positionLeft, positionRight) {
+  this.element = element;
+
   // mirrored div
-  var div = document.createElement('div');
-  div.id = 'input-textarea-caret-position-mirror-div';
-  document.body.appendChild(div);
+  this.div = document.createElement('div');
+  // this.div.id = 'input-textarea-caret-position-mirror-div';
+  element.parentNode.insertBefore(this.div, element);
 
-  var style = div.style;
-  var computed = window.getComputedStyle? getComputedStyle(element) : element.currentStyle;  // currentStyle for IE < 9
+  var style = this.div.style;
+  this.computed = window.getComputedStyle? getComputedStyle(element) : element.currentStyle;  // currentStyle for IE < 9
 
   // default textarea styles
   style.whiteSpace = 'pre-wrap';
@@ -63,60 +66,60 @@ var getCaretCoordinatesFn = function (element, positionLeft, positionRight) {
 
   // transfer the element's properties to the div
   properties.forEach(function (prop) {
-    style[prop] = computed[prop];
+    style[prop] = self.computed[prop];
   });
 
   if (isFirefox) {
-    style.width = parseInt(computed.width, 10) - 2 + 'px';  // Firefox adds 2 pixels to the padding - https://bugzilla.mozilla.org/show_bug.cgi?id=753662
+    style.width = parseInt(this.computed.width, 10) - 2 + 'px';  // Firefox adds 2 pixels to the padding - https://bugzilla.mozilla.org/show_bug.cgi?id=753662
     // Firefox lies about the overflow property for textareas: https://bugzilla.mozilla.org/show_bug.cgi?id=984275
-    if (element.scrollHeight > parseInt(computed.height, 10))
+    if (element.scrollHeight > parseInt(this.computed.height, 10))
       style.overflowY = 'scroll';
   } else {
     style.overflow = 'hidden';  // for Chrome to not render a scrollbar; IE keeps overflowY = 'scroll'
   }
 
+  this.divText = document.createTextNode('');
+  this.div.appendChild(this.divText);
+  this.span = document.createElement('span');
+  this.spanText = document.createTextNode('');
+  this.span.appendChild(this.spanText);
+  this.div.appendChild(this.span);
+}
+
+CaretCoordinates.prototype.get = function(positionLeft, positionRight) {
   // calculate left offset
-  div.textContent = element.value.substring(0, positionLeft);
+  this.divText.nodeValue = this.element.value.substring(0, positionLeft);
 
   // the second special handling for input type="text" vs textarea: spaces need to be replaced with non-breaking spaces - http://stackoverflow.com/a/13402035/1269037
-  if (element.nodeName === 'INPUT')
-    div.textContent = div.textContent.replace(/\s/g, "\u00a0");
-
-  var span = document.createElement('span');
+  if (this.element.nodeName === 'INPUT')
+    this.divText.nodeValue = this.divText.nodeValue.replace(/\s/g, "\u00a0");
 
   // Wrapping must be replicated *exactly*, including when a long word gets
   // onto the next line, with whitespace at the end of the line before (#7).
   // The  *only* reliable way to do that is to copy the *entire* rest of the
   // textarea's content into the <span> created at the caret position.
   // for inputs, just '.' would be enough, but why bother?
-  span.textContent = element.value.substring(positionLeft) || '.';  // || because a completely empty faux span doesn't render at all
+  this.spanText.nodeValue = this.element.value.substring(positionLeft) || '.';  // || because a completely empty faux span doesn't render at all
 
-  div.appendChild(span);
-  var left = span.offsetLeft + parseInt(computed['borderLeftWidth'], 10);
+  var left = this.span.offsetLeft + parseInt(this.computed['borderLeftWidth'], 10);
 
   // calculate right offset
-  div.textContent = element.value.substring(0, positionRight);
+  this.divText.nodeValue = this.element.value.substring(0, positionRight);
 
   // the second special handling for input type="text" vs textarea: spaces need to be replaced with non-breaking spaces - http://stackoverflow.com/a/13402035/1269037
-  if (element.nodeName === 'INPUT')
-    div.textContent = div.textContent.replace(/\s/g, "\u00a0");
+  if (this.element.nodeName === 'INPUT')
+    this.divText.nodeValue = this.divText.nodeValue.replace(/\s/g, "\u00a0");
 
-  span.textContent = element.value.substring(positionRight) || '.';  // || because a completely empty faux span doesn't render at all
-  div.appendChild(span);
+  this.spanText.nodeValue = this.element.value.substring(positionRight) || '.';  // || because a completely empty faux span doesn't render at all
 
   var coordinates = {
-    top: span.offsetTop + parseInt(computed['borderTopWidth'], 10),
+    top: this.span.offsetTop + parseInt(this.computed['borderTopWidth'], 10),
     left: left,
-    right: span.offsetLeft + parseInt(computed['borderLeftWidth'], 10)
+    right: this.span.offsetLeft + parseInt(this.computed['borderLeftWidth'], 10)
   };
-
-  document.body.removeChild(div);
 
   return coordinates;
 };
 
-if (typeof Package !== 'undefined') {
-  getCaretCoordinates = getCaretCoordinatesFn;  // Meteor
-} else {
-  module.exports = getCaretCoordinatesFn;    // Component
-}
+module.exports = CaretCoordinates;
+
