@@ -111,11 +111,17 @@ CaretCoordinates.prototype.get = function(positionLeft, positionRight) {
     this.divText.nodeValue = this.divText.nodeValue.replace(/\s/g, "\u00a0");
 
   this.spanText.nodeValue = this.element.value.substring(positionRight) || '.';  // || because a completely empty faux span doesn't render at all
+  var right = this.span.offsetLeft + parseInt(this.computed['borderLeftWidth'], 10);
+
+  // special case where right position is not be calculated correctly (full line selected)
+  if (left === right) {
+    right = this.span.offsetWidth + parseInt(this.computed['borderLeftWidth'], 10);
+  }
 
   var coordinates = {
     top: this.span.offsetTop + parseInt(this.computed['borderTopWidth'], 10),
     left: left,
-    right: this.span.offsetLeft + parseInt(this.computed['borderLeftWidth'], 10)
+    right: right
   };
 
   return coordinates;
