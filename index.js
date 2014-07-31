@@ -114,7 +114,7 @@ CaretCoordinates.prototype.get = function(positionLeft, positionRight) {
   var right = this.span.offsetLeft + parseInt(this.computed['borderLeftWidth'], 10);
 
   // special case where right position is not be calculated correctly (full line selected)
-  if (left === right) {
+  if (right <= left) {
     right = this.span.offsetWidth + parseInt(this.computed['borderLeftWidth'], 10);
   }
 
