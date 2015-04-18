@@ -1,6 +1,6 @@
 {
   "name": "textarea-caret-position",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "xy coordinates of a textarea or input's caret",
   "main": "index.js",
   "directories": {

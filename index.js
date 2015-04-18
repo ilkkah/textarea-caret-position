@@ -76,7 +76,14 @@ function CaretCoordinates(element) {
   this.spanText = document.createTextNode('');
   this.span.appendChild(this.spanText);
   this.div.appendChild(this.span);
+
+  function resize() {
+    style.width = self.computed.width;
+  }
+
+  window.addEventListener('resize', resize);
 }
+
 
 CaretCoordinates.prototype.get = function(positionLeft, positionRight) {
   // calculate left offset
