@@ -1,3 +1,7 @@
+# NOTE: don't use
+
+Use the official version instead: https://github.com/ilkkah/textarea-caret-position/pull/1
+
 # Textarea Caret Position
 
 Get the `top` and `left` coordinates of the caret in a `<textarea>` or
